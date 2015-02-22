@@ -1,7 +1,7 @@
 # js
 Javascript Dependency Manager - Async/Sync - Non-Obstrusive - Lazy Loading
 
-$js().config({
+	$js().config({
 		async:true,
 		path:'js/',
 		pathSuffix:'.js',
