@@ -1,13 +1,13 @@
-# js
-Javascript Dependency Manager - Async/Sync - Non-Obstrusive - Lazy Loading
+# $js
 
-	$js().config({
-		async:true,
-		path:'js/',
-		pathSuffix:'.js',
-		pathDetection:true,
-		dev:false
-	});
+	lighweight javascript dependencies manager
+	asynchronous module definition framework
+
+	$js.async = true;
+	$js.path = 'js/';
+	$js.pathSuffix = '.js';
+	$js.pathDetection = true;
+	$js.dev = false;
 
 	$js('js/script.js');
 	$js('js/script');
