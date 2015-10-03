@@ -11,11 +11,11 @@ Simple Usage
  Put this code at the top bottom of your page just before the ending body tag.
 
 ```html
- <script src="js/js.pack.js" type="text/javascript"></script>
- <script type="text/javascript">
-     $js.dev = true;
-     $js('script');
- </script>
+<script src="js/js.pack.js" type="text/javascript"></script>
+<script type="text/javascript">
+    $js.dev = true;
+    $js('script');
+</script>
 ```
 
 Dependencies manager
@@ -30,11 +30,11 @@ If dev set to true, a time GET parameter will be added to script calling, like i
 If you put *async* to tru, all scripts called from main flow will be loaded in order. It's not recommanded to do that.
 
 ```javascript
- $js.async = true;
- $js.path = 'js/';
- $js.pathSuffix = '.js';
- $js.pathDetection = true;
- $js.dev = false;
+$js.async = true;
+$js.path = 'js/';
+$js.pathSuffix = '.js';
+$js.pathDetection = true;
+$js.dev = false;
 ```
 
 ### Simple call
