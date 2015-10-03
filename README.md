@@ -23,11 +23,7 @@ Dependencies manager
 
 ### Config
 
- Here is the default config.   
-With *pathDetection* enabled if the *path* is allready present at start of script url, it will not be repeated, same at end for the *pathSuffix*.   
-If a script url start with trailing slash "*/*", no path or pathSuffix will be added to it, allowing you to use pseudo absolute path in your domain. In the same way if a script url contain the "*://*" sign of absolute url, it will not be changed.   
-If dev set to true, a time GET parameter will be added to script calling, like in jquery, to avoid the cache mechanism.   
-If you put *async* to tru, all scripts called from main flow will be loaded in order. It's not recommanded to do that.
+Here is the default config.   
 
 ```javascript
 $js.async = true;
@@ -37,165 +33,199 @@ $js.pathDetection = true;
 $js.dev = false;
 ```
 
+With *pathDetection* enabled if the *path* is allready present at start of script url, it will not be repeated, same at end for the *pathSuffix*.   
+If a script url start with trailing slash "*/*", no path or pathSuffix will be added to it, allowing you to use pseudo absolute path in your domain. In the same way if a script url contain the "*://*" sign of absolute url, it will not be changed.   
+If dev set to true, a time GET parameter will be added to script calling, like in jquery, to avoid the cache mechanism.   
+If you put *async* to tru, all scripts called from main flow will be loaded in order. It's not recommanded to do that.
+
+
 ### Simple call
 
-    $js('js/script.js');
-    $js('js/script');
-    $js('script.js');
-    $js('script');
+```javascript
+$js('js/script.js');
+$js('js/script');
+$js('script.js');
+$js('script');
+```
 
 ### Async Callbacks
 
- In async mode it will not wait for dependency1 loaded to start loading dependency2. In this case, dependency2 does not depend on dependency1. The order of arguments doesn't matter.
-    $js(['dependency1','dependency2'],function(){
-    	//when dependency1 and dependency2 are loaded
-    });
-    $js({
-    	dependency1:function(){
-    		//when dependency1 loaded
-    	},
-    	dependency2:function(){
-    		//when dependency2 loaded (after dependency loaded)
-    	},
-    },function(){
-    	//when dependency1 and dependency2 are loaded
-    });
+In async mode it will not wait for dependency1 loaded to start loading dependency2. In this case, dependency2 does not depend on dependency1. The order of arguments doesn't matter.
+
+```javascript
+$js(['dependency1','dependency2'],function(){
+	//when dependency1 and dependency2 are loaded
+});
+$js({
+	dependency1:function(){
+		//when dependency1 loaded
+	},
+	dependency2:function(){
+		//when dependency2 loaded (after dependency loaded)
+	},
+},function(){
+	//when dependency1 and dependency2 are loaded
+});
+```
 
 ### Sync Callbacks
 
- The boolean *true* enable *sync* mode. In sync mode it will wait for dependency1 loaded to start loading dependency2. In this case, dependency2 does depend on dependency1. The order of arguments doesn't matter.
-    $js(true,['dependency1','dependency2'],function(){
-    	//when dependency1 and dependency2 are loaded
-    });
-    $js(true,{
-    	'dependency1':function(){
-    		//when dependency1 loaded
-    	},
-    	'dependency2':function(){
-    		//when dependency2 loaded (after dependency loaded)
-    	},
-    },function(){
-    		//when dependency1 and dependency2 are loaded
-    });
+The boolean *true* enable *sync* mode. In sync mode it will wait for dependency1 loaded to start loading dependency2. In this case, dependency2 does depend on dependency1. The order of arguments doesn't matter.
+
+```javascript
+$js(true,['dependency1','dependency2'],function(){
+	//when dependency1 and dependency2 are loaded
+});
+$js(true,{
+	'dependency1':function(){
+		//when dependency1 loaded
+	},
+	'dependency2':function(){
+		//when dependency2 loaded (after dependency loaded)
+	},
+},function(){
+		//when dependency1 and dependency2 are loaded
+});
+```
 
 ### Alias
 
- Alias are recursively resolved and can be a reference to several scripts.
-    $js.alias('j','jquery');
-    $js.alias('jui',['j','jquery-ui/core','jquery-ui/widget']);
+Alias are recursively resolved and can be a reference to several scripts.
+
+```javascript
+$js.alias('j','jquery');
+$js.alias('jui',['j','jquery-ui/core','jquery-ui/widget']);
+```
 
 ### Dependencies Map
 
- A call to *dependencies* method will add the given map to allready defined. This map will be used on script calls to resolve dependencies and load them when needed but will not load the keys of map and all the map.
-    $js.dependencies({
-    	'jquery-ui/mouse':['jui'],
-    	'jquery-ui/sortable':['jui','jquery-ui/mouse'],
-    	'jquery-ui/resizable':['jui','jquery-ui/mouse'],
-    	'jquery.sortElements':['j'],
-    });
-    
-    $js([
-    	'jquery.sortElements',
-    	'jquery-ui/sortable',
-    	'jquery-ui/resizable',
-    ],function(){
-    	//...
-    });
+A call to *dependencies* method will add the given map to allready defined. This map will be used on script calls to resolve dependencies and load them when needed but will not load the keys of map and all the map.
+
+```javascript
+$js.dependencies({
+	'jquery-ui/mouse':['jui'],
+	'jquery-ui/sortable':['jui','jquery-ui/mouse'],
+	'jquery-ui/resizable':['jui','jquery-ui/mouse'],
+	'jquery.sortElements':['j'],
+});
+
+$js([
+	'jquery.sortElements',
+	'jquery-ui/sortable',
+	'jquery-ui/resizable',
+],function(){
+	//...
+});
+```
 
 ### Chainable
 
-    $js('dependency1')('dependency2')(function(){
-    	//when dependency1 and dependency2 are loaded
-    });
-    
-    //is equivalent of
-    $js(true,['dependency1','dependency2'],function(){
-    	//when dependency1 and dependency2 are loaded
-    });
-    
-    //and equivalent of
-    $js('dependency1',function(){
-    	$js('dependency2',function(){
-    		//when dependency1 and dependency2 are loaded
-    	});
-    });
-    
-    //but the difference it that you can assign the resolved function to variable
-    var whenReady = $js('dependency1');
-    whenReady = whenReady('dependency2');
-    whenReady(function(){
-    	//when dependency1 and dependency2 are loaded
-    });
+```javascript
+$js('dependency1')('dependency2')(function(){
+	//when dependency1 and dependency2 are loaded
+});
+
+//is equivalent of
+$js(true,['dependency1','dependency2'],function(){
+	//when dependency1 and dependency2 are loaded
+});
+
+//and equivalent of
+$js('dependency1',function(){
+	$js('dependency2',function(){
+		//when dependency1 and dependency2 are loaded
+	});
+});
+
+//but the difference it that you can assign the resolved function to variable
+var whenReady = $js('dependency1');
+whenReady = whenReady('dependency2');
+whenReady(function(){
+	//when dependency1 and dependency2 are loaded
+});
+```
 
 CSS helper
 ----------
 
 ### Config
 
- Here is the default config. See [config of js](Documentation/JS#js-config) upper for details.
-    $css.path = 'css/';
-    $css.pathSuffix = '.css';
-    $css.pathDetection = true;
-    $css.dev = false;
+Here is the default config. See [config of js](Documentation/JS#js-config) upper for details.
+
+```javascript
+$css.path = 'css/';
+$css.pathSuffix = '.css';
+$css.pathDetection = true;
+$css.dev = false;
+```
 
 ### Simple call
 
- It will check if the link is allready present in the document and if it's the case, it will not load it. You cannot use callback on it because this feature it's not supported by browsers.
-    $css('css/style.css');
-    $css('css/style');
-    $css('style.css');
-    $css('style');
+It will check if the link is allready present in the document and if it's the case, it will not load it. You cannot use callback on it because this feature it's not supported by browsers.
+
+```javascript
+$css('css/style.css');
+$css('css/style');
+$css('style.css');
+$css('style');
+```
 
 Asynchronous Module Definition
 ------------------------------
 
- A module can be a function or an object and can be defined in several ways. Order of arguments doesn't matter.
+A module can be a function or an object and can be defined in several ways. Order of arguments doesn't matter.
 
 ### Simple module definition and usage
 
-    // definition
-    $js.module('random',function(){
-    	return Math.random();
-    });
-    
-    // usage
-    var number = $js.module('random')();
+```javascript
+// definition
+$js.module('random',function(){
+	return Math.random();
+});
+
+// usage
+var number = $js.module('random')();
+```
 
 ### Module definition and usage with automatic name
 
-    // file script.js
-    $js('random',function(){	
-    	//usage
-    	var number = $js.module('random')();
-    });
-    
-    // file random.js
-    // here the name will be automaticaly set to 'random'
-    $js.module(function(){
-    	return Math.random();
-    });
+```javascript
+// file script.js
+$js('random',function(){	
+	//usage
+	var number = $js.module('random')();
+});
+
+// file random.js
+// here the name will be automaticaly set to 'random'
+$js.module(function(){
+	return Math.random();
+});
+```
 
 ### Complete module definition with dependencies
 
-    // file script.js
-    $js('moduleA',function(){
-    	// will output 'test of moduleA'
-    	console.log( $js.module('moduleA').val );
-    	
-    	$js.module('moduleA').test();
-    });
-    
-    // file moduleA.js
-    // with dependencies in sync mode
-    $js.module(true,['moduleB','otherDependency'],{
-    	val:'test of moduleA',
-    	test:function(){
-    		// will output 'result of test moduleB'
-    		console.log( $js.module('moduleB')() );
-    	}
-    });
-    
-    // file moduleB.js
-    $js.module(function(){
-    	return 'result of moduleB';
-    });
+```javascript
+// file script.js
+$js('moduleA',function(){
+	// will output 'test of moduleA'
+	console.log( $js.module('moduleA').val );
+	
+	$js.module('moduleA').test();
+});
+
+// file moduleA.js
+// with dependencies in sync mode
+$js.module(true,['moduleB','otherDependency'],{
+	val:'test of moduleA',
+	test:function(){
+		// will output 'result of test moduleB'
+		console.log( $js.module('moduleB')() );
+	}
+});
+
+// file moduleB.js
+$js.module(function(){
+	return 'result of moduleB';
+});
+```
