@@ -8,12 +8,15 @@
 Simple Usage
 ------------
 
- Put this code at the top bottom of your page just before the ending body tag **.
-    <script src="js/js.pack.js" type="text/javascript"></script>
-    <script type="text/javascript">
-    	$js.dev = true;
-    	$js('script');
-    </script>
+ Put this code at the top bottom of your page just before the ending body tag.
+
+```html
+ <script src="js/js.pack.js" type="text/javascript"></script>
+ <script type="text/javascript">
+     $js.dev = true;
+     $js('script');
+ </script>
+```
 
 Dependencies manager
 --------------------
@@ -24,12 +27,15 @@ Dependencies manager
 With *pathDetection* enabled if the *path* is allready present at start of script url, it will not be repeated, same at end for the *pathSuffix*.   
 If a script url start with trailing slash "*/*", no path or pathSuffix will be added to it, allowing you to use pseudo absolute path in your domain. In the same way if a script url contain the "*://*" sign of absolute url, it will not be changed.   
 If dev set to true, a time GET parameter will be added to script calling, like in jquery, to avoid the cache mechanism.   
-If you put *async* to true, all scripts called from main flow will be loaded in order. It's not recommanded to do that.
-    $js.async = true;
-    $js.path = 'js/';
-    $js.pathSuffix = '.js';
-    $js.pathDetection = true;
-    $js.dev = false;
+If you put *async* to tru, all scripts called from main flow will be loaded in order. It's not recommanded to do that.
+
+```javascript
+ $js.async = true;
+ $js.path = 'js/';
+ $js.pathSuffix = '.js';
+ $js.pathDetection = true;
+ $js.dev = false;
+```
 
 ### Simple call
 
