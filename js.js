@@ -649,25 +649,22 @@
 		return css;
 	})();
 	
-	var load = function(){
-		var base = d.getElementsByTagName('base');
-		if(base.length){
-			var dcdn = base[0].getAttribute('data-cdn');
-			if(typeof(dcdn)!='undefined'){
-				$js.cdn = dcdn;
-				$css.cdn = dcdn;
-			}
+	var base = d.getElementsByTagName('base');
+	if(base.length){
+		var dcdn = base[0].getAttribute('data-cdn');
+		if(typeof(dcdn)!='undefined'){
+			$js.cdn = dcdn;
+			$css.cdn = dcdn;
 		}
-			
-			
+	}
+	
+	var load = function(){			
 		apt = x;
 		for(var k in scripts[0])
 			loader(0,k);
 		for(var k in scripts[1])
 			loader(1,k);
 		
-		
-
 		var ev = '';
 		var keys = keysOf(y).reverse();
 		for(var u in keys){
