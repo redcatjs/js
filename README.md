@@ -150,7 +150,7 @@ CSS helper
 
 ### Config
 
-Here is the default config. See [config of js](http://wildsurikat.com/js-amd#js-config) upper for details.
+Here is the default config. See [config of js](http://redcatphp.com/js-amd#js-config) upper for details.
 
 ```javascript
 $css.path = 'css/';
