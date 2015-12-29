@@ -114,12 +114,14 @@
 	var resolveAsyncArr = function(u){
 		var arr = [];
 		for(var k in u){
+			if(!u.hasOwnProperty(k)) continue;
 			if((/^-?[0-9]+$/).test(k)){
 				if(typeof(u[k])=='string'){
 					arr.push(u[k]);
 				}
 				else{
 					for(var ks in u[k]){
+						if(!u[k].hasOwnProperty(ks)) continue;
 						arr.push(u[k][ks]);
 					}
 				}
@@ -129,6 +131,7 @@
 			}
 			if(typeof(u[k])=='object'){
 				for(var ks in u[k]){
+					if(!u[k].hasOwnProperty(ks)) continue;
 					if(typeof(u[k][ks])=='string'&&indexOf(arr,u[k][ks])===-1){
 						arr.push(u[k][ks]);
 					}
@@ -140,6 +143,7 @@
 	var resolveDeps = function(u,arr){
 		var deps = {};
 		for(var k in u){
+			if(!u.hasOwnProperty(k)) continue;
 			var key = k;
 			if((/^-?[0-9]+$/).test(k))
 				key = u[k];
@@ -148,6 +152,7 @@
 					deps[key] = [];
 				}
 				for(var ks in $js.dependenciesMap[key]){
+					if(!$js.dependenciesMap[key].hasOwnProperty(ks)) continue;
 					if(indexOf(deps[key],$js.dependenciesMap[key][ks])===-1){
 						deps[key].push($js.dependenciesMap[key][ks]);
 					}
@@ -164,6 +169,7 @@
 					$js.dependenciesMap[key] = [];
 				}
 				for(var ks in u[k]){
+					if(!u[k].hasOwnProperty(ks)) continue;
 					if(typeof(u[k][ks])=='string'){
 						if(indexOf(deps[key],u[k][ks])===-1){
 							deps[key].push(u[k][ks]);
@@ -180,8 +186,10 @@
 	var resolveDepCalls = function(u){
 		var deps = {};
 		for(var k in u){
+			if(!u.hasOwnProperty(k)) continue;
 			if(typeof(u[k])=='object'){
 				for(var ks in u[k]){
+					if(!u[k].hasOwnProperty(ks)) continue;
 					if(typeof(u[k][ks])=='function'){
 						if(typeof(deps[k])=='undefined'){
 							deps[k] = [];
@@ -196,6 +204,7 @@
 	var depsLibPush = function(deps,lib,container){
 		if(typeof(deps[lib])!='undefined'){
 			for(var k in deps[lib]){
+				if(!deps[lib].hasOwnProperty(k)) continue;
 				depsLibPush(deps,deps[lib][k],container);
 				if(indexOf(container,deps[lib][k])===-1)
 					container.push(deps[lib][k]);
@@ -205,6 +214,7 @@
 	var resolveDepMap = function(deps){
 		var depMap = {};
 		for(var k in deps){
+			if(!deps.hasOwnProperty(k)) continue;
 			if(typeof(depMap[k])=='undefined'){
 				depMap[k] = [];
 			}
@@ -215,7 +225,9 @@
 	var resolveDepTree = function(depMap){
 		var depTree = {};
 		for(var k in depMap){
+			if(!depMap.hasOwnProperty(k)) continue;
 			for(var k2 in depMap[k]){
+				if(!depMap[k].hasOwnProperty(k2)) continue;
 				if(typeof(depTree[depMap[k][k2]])=='undefined'){
 					depTree[depMap[k][k2]] = [];
 				}
@@ -231,6 +243,7 @@
 		while(!isEmptyObject(deps)){
 			var top = [];
 			for(var i in splices){
+				if(!splices.hasOwnProperty(i)) continue;
 				deps[splices[i][0]].splice(indexOf(deps[splices[i][0]],splices[i][1]),1);
 				if(deps[splices[i][0]].length===0){
 					if(indexOf(topAll,splices[i][0])===-1){
@@ -242,7 +255,9 @@
 			}
 			splices = [];
 			for(var k in deps){
+				if(!deps.hasOwnProperty(k)) continue;
 				for(var ks in deps[k]){
+					if(!deps[k].hasOwnProperty(ks)) continue;
 					var dep = deps[k][ks];
 					if(typeof(deps[dep])=='undefined'){
 						if(indexOf(topAll,dep)===-1){
@@ -267,10 +282,12 @@
 			}
 		}
 		for(var z in depTree[g]){
+			if(!depTree[g].hasOwnProperty(z)) continue;
 			var dp = depTree[g][z];
 			if(depMap[dp]){
 				var ok = true;
 				for(var z2 in depMap[dp]){
+					if(!depMap[dp].hasOwnProperty(z2)) continue;
 					if(indexOf(required,getSrc(depMap[dp][z2]))===-1){
 						ok = false;
 						break;
@@ -298,10 +315,12 @@
 			if(u instanceof Array){
 				var un = [];
 				for(var i in u){
+					if(!u.hasOwnProperty(i)) continue;
 					if(typeof(u[i])=='string'&&typeof($js.aliasMap[u[i]])!='undefined'){
 						var alias = $js.aliasMap[u[i]];
 						if(typeof(alias)=='object'){
 							for(var ii in alias){
+								if(!alias.hasOwnProperty(ii)) continue;
 								if((/^-?[0-9]+$/).test(ii)){
 									var aliasii = alias[ii];
 								}
@@ -329,6 +348,7 @@
 			}
 			else{
 				for(var k in u){
+					if(!u.hasOwnProperty(k)) continue;
 					u[k] = resolveAlias(u[k]);
 				}
 			}
@@ -338,8 +358,10 @@
 	var requiredGroups = [];
 	var asyncArrayCall = function(uo,s,c,i,deps){
 		var u = [];
-		for(var k in uo)
+		for(var k in uo){
+			if(!uo.hasOwnProperty(k)) continue;
 			u.push(getSrc(uo[k]));
+		}
 		u = u.sort().toString();
 		$js(s,function(){
 			requiredGroups[i].push(getSrc(s));
@@ -355,6 +377,7 @@
 		var deps = resolveDeps(u,arr);
 		var m = resolveDepCalls(u);
 		for(var k in u){
+			if(!u.hasOwnProperty(k)) continue;
 			if(typeof(u[k])!='object'){
 				if((/^-?[0-9]+$/).test(k)){
 					k = u[k];
@@ -370,11 +393,13 @@
 		var rio = requiredGroups.length-1;
 		var h = [];
 		for(var k in arr){
+			if(!arr.hasOwnProperty(k)) continue;
 			h.push(getSrc(arr[k]));
 		}
 		h = h.sort().toString();
 		var depTreeKeys = [];
 		for(var k in t){
+			if(!t.hasOwnProperty(k)) continue;
 			if(indexOf(depTreeKeys,k)===-1)
 				depTreeKeys.push(k);
 		}
@@ -386,9 +411,11 @@
 		};
 		var ev = '';
 		for(var _g in depTreeKeys.reverse()){
+			if(!depTreeKeys.hasOwnProperty(_g)) continue;
 			var g = depTreeKeys[_g];
 			if(typeof(m[g])!='undefined'){
 				for(var i in m[g].reverse()){
+					if(!m[g].hasOwnProperty(i)) continue;
 					ev = 'm["'+g+'"]['+i+']();'+ev;
 				}
 			}
@@ -404,6 +431,7 @@
 			tops[0] = [];
 		var m = resolveDepCalls(u);
 		for(var k in u){
+			if(!u.hasOwnProperty(k)) continue;
 			if(typeof(u[k])!='object'){
 				var p;
 				if((/^-?[0-9]+$/).test(k))
@@ -416,10 +444,13 @@
 		}
 		var ev = c?'if(c)c();':'';
 		for(var k in tops.reverse()){
+			if(!tops.hasOwnProperty(k)) continue;
 			for(var ks in tops[k].reverse()){
+				if(!tops[k].hasOwnProperty(ks)) continue;
 				var d = tops[k][ks];
 				if(typeof(m[d])!='undefined'){
 					for(var i in m[d].reverse()){
+						if(!m[d].hasOwnProperty(i)) continue;
 						ev = 'm["'+d+'"]['+i+']();'+ev;
 					}
 				}
@@ -467,7 +498,6 @@
 			
 			//alias
 			u = resolveAlias(u);
-			
 			
 			//handle
 			if(typeof(u)=='object'){
@@ -574,6 +604,7 @@
 		};
 		js.dependencies = function(deps){
 			for(var k in deps){
+				if(!deps.hasOwnProperty(k)) continue;
 				if(typeof(js.dependenciesMap[k])=='undefined'){
 					js.dependenciesMap[k] = [];
 				}
@@ -588,6 +619,7 @@
 				else{
 					deps[k] = resolveAlias(deps[k]);
 					for(var ks in deps[k]){
+						if(!deps[k].hasOwnProperty(ks)) continue;
 						js.dependenciesMap[k].push(deps[k][ks]);
 					}
 				}
@@ -602,15 +634,19 @@
 		if(!m){
 			if(k){
 				x(k,function(){
-					for(var i in s)
+					for(var i in s){
+						if(!s.hasOwnProperty(i)) continue;
 						if(s[i])
 							s[i]();
+					}
 				});
 			}
 			else{
-				for(var i in s)
+				for(var i in s){
+					if(!s.hasOwnProperty(i)) continue;
 					if(s[i])
 						s[i]();
+				}
 			}
 		}
 		else{
@@ -621,8 +657,10 @@
 	};
 	var keysOf = function(o){
 		var a = [];
-		for(var k in o)
+		for(var k in o){
+			if(!o.hasOwnProperty(k)) continue;
 			a.push(k);
+		}
 		return a;
 	};
 
@@ -677,10 +715,14 @@
 	
 	var load = function(){			
 		apt = x;
-		for(var k in scripts[0])
+		for(var k in scripts[0]){
+			if(!scripts[0].hasOwnProperty(k)) continue;
 			loader(0,k);
-		for(var k in scripts[1])
+		}
+		for(var k in scripts[1]){
+			if(!scripts[0].hasOwnProperty(k)) continue;
 			loader(1,k);
+		}
 		
 		var ev = '';
 		var keys = keysOf(y).reverse();
@@ -688,9 +730,11 @@
 			u = keys[u];
 			var keys2 = keysOf(y[u]).reverse();
 			var ev2 = '';
-			for(var i in keys2)
+			for(var i in keys2){
+				if(!keys2.hasOwnProperty(i)) continue;
 				if(y[u]&&y[u][i])
 					ev2 += 'y["'+u+'"]["'+i+'"]();';
+			}
 			ev = 'x("'+u+'"'+(ev? ',function(){'+ev2+ev+'}' :'')+');';
 		}
 		if(ev)
