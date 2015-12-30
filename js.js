@@ -547,7 +547,16 @@
 		
 		//methods
 		js.alias = function(alias,concrete){
-			js.aliasMap[alias] = concrete;
+			if(typeof(alias)=='object'){
+				for(var k in alias){
+					if(alias.hasOwnProperty(k)){
+						js(k,alias[k]);
+					}
+				}
+			}
+			else{
+				js.aliasMap[alias] = concrete;
+			}
 		};
 		js.module = function(){
 			//mixed args
