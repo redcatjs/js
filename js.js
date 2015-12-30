@@ -550,7 +550,7 @@
 			if(typeof(alias)=='object'){
 				for(var k in alias){
 					if(alias.hasOwnProperty(k)){
-						js(k,alias[k]);
+						js.alias(k,alias[k]);
 					}
 				}
 			}
