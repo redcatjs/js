@@ -242,8 +242,7 @@
 		var splices = [];
 		while(!isEmptyObject(deps)){
 			var top = [];
-			for(var i in splices){
-				if(!splices.hasOwnProperty(i)) continue;
+			for(var i = 0; i < splices.length; i++){
 				deps[splices[i][0]].splice(indexOf(deps[splices[i][0]],splices[i][1]),1);
 				if(deps[splices[i][0]].length===0){
 					if(indexOf(topAll,splices[i][0])===-1){
@@ -314,8 +313,7 @@
 		else if(typeof(u)=='object'){
 			if(u instanceof Array){
 				var un = [];
-				for(var i in u){
-					if(!u.hasOwnProperty(i)) continue;
+				for(var i = 0; i < u.length; i++){
 					if(typeof(u[i])=='string'&&typeof($js.aliasMap[u[i]])!='undefined'){
 						var alias = $js.aliasMap[u[i]];
 						if(typeof(alias)=='object'){
@@ -643,16 +641,14 @@
 		if(!m){
 			if(k){
 				x(k,function(){
-					for(var i in s){
-						if(!s.hasOwnProperty(i)) continue;
+					for(var i = 0; i < s.length; i++){
 						if(s[i])
 							s[i]();
 					}
 				});
 			}
 			else{
-				for(var i in s){
-					if(!s.hasOwnProperty(i)) continue;
+				for(var i = 0; i < s.length; i++){
 					if(s[i])
 						s[i]();
 				}
@@ -739,8 +735,7 @@
 			u = keys[u];
 			var keys2 = keysOf(y[u]).reverse();
 			var ev2 = '';
-			for(var i in keys2){
-				if(!keys2.hasOwnProperty(i)) continue;
+			for(var i = 0; i < keys2.length; i++){
 				if(y[u]&&y[u][i])
 					ev2 += 'y["'+u+'"]["'+i+'"]();';
 			}
