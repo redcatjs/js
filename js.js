@@ -27,7 +27,7 @@
 	var ts = (new Date().getTime()).toString();
 	var cacheFix = function(fileName,dev,min,ext,cdn){
 		if(dev||min){
-			var relative = fileName.indexOf('://')<0||(cdn&&fileName.indexOf(cdn)===0);
+			var relative = fileName.indexOf('//')<0||(cdn&&fileName.indexOf(cdn)===0);
 			if(min){
 				if(relative&&fileName.indexOf('.min.'+ext)<0&&fileName.indexOf('.'+ext)){
 					var p = fileName.lastIndexOf('.'+ext);
@@ -63,7 +63,7 @@
 	var getSrc = function(u){
 		if(typeof(u)=='undefined'||!u)
 			return;
-		var relative = u.indexOf('://')<0&&u.substr(0,2)!='./';
+		var relative = u.indexOf('//')<0&&u.substr(0,2)!='./';
 		return ($js.cdn&&relative?$js.cdn:'')+(u.indexOf('/')!==0?($js.path&&relative&&(!$js.pathDetection||u.indexOf($js.path)!=0)?($js.path+u):u)+($js.pathSuffix&&relative&&(!$js.pathDetection||u.substr(u.length-$js.pathSuffix.length)!=$js.pathSuffix)?$js.pathSuffix:''):u);
 	};
 	var createScript = function(u){
@@ -677,7 +677,7 @@
 	var getHref = function(u){
 		if(typeof(u)=='undefined'||!u)
 			return;
-		var relative = u.indexOf('://')<0&&u.substr(0,2)!='./';
+		var relative = u.indexOf('//')<0&&u.substr(0,2)!='./';
 		return ($css.cdn&&relative?$css.cdn:'')+($css.path&&relative&&u.indexOf('/')!==0&&(!$css.pathDetection||u.indexOf($css.path)!=0)?($css.path+u):u)+($css.pathSuffix&&relative&&(!$css.pathDetection||u.substr(u.length-$css.pathSuffix.length)!=$css.pathSuffix)?$css.pathSuffix:'');
 	};
 	var loadedCSS = [];
