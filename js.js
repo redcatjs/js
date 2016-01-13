@@ -31,7 +31,8 @@
 			if(min){
 				if(relative&&fileName.indexOf('.min.'+ext)<0&&fileName.indexOf('.'+ext)){
 					var p = fileName.lastIndexOf('.'+ext);
-					fileName = fileName.substr(0,p)+'.min'+fileName.substr(p);
+					if(p>-1)
+						fileName = fileName.substr(0,p)+'.min'+fileName.substr(p);
 				}
 			}
 			else{
