@@ -2,7 +2,7 @@
 	$js - asynchronous module definition framework
 			or just simple lightweight javascript dependencies manager
 	
-	@version 2.6
+	@version 2.7
 	@link http://github.com/redcatphp/js/
 	@author Jo Surikat <jo@surikat.pro>
 	@website http://redcatphp.com
@@ -468,6 +468,59 @@
 		if(typeof(c)=='function')
 			scripts[m][u].push(c);
 	};
+	var paramsReflection = function(f){
+		var args = f.toString().match(/^\s*function\s+(?:\w*\s*)?\((.*?)\)\s*{/);
+		var r = {};
+		if(args&&args[1]){
+			args = args[1];
+			args = args.replace(/((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg,'');
+			args = args.trim().split(/\s*,\s*/);
+			for(var i=0;i<args.length;i++){
+				var arg = args[i];
+				var idf = arg.indexOf('=');
+				if(idf===-1){
+					r[arg] = undefined;
+				}
+				else{
+					r[arg.substr(0,idf)] = eval(arg.substr(idf+1).trim());
+				}
+			}
+		}
+		return r;
+	};
+	var moduleDomElement = function(module,el,attrNs){
+		var o = {};
+		var attributes = el.attributes;
+		var prefixNs = attrNs+'-';
+		var prefixNsL = prefixNs.length;
+		for(var k in attributes){
+			if(attributes.hasOwnProperty(k)){
+				var attribute = attributes[k];
+				if(attribute.name&&attribute.name.substr(0,prefixNsL)==prefixNs){
+					o[attribute.name.substr(prefixNsL)] = attribute.value;
+				}
+			}
+		}
+		$js(module,function(){
+			var func = $js.module(module);			
+			var params = paramsReflection(func);
+			var apply = [];
+			for(var k in params){
+				if(params.hasOwnProperty(k)){
+					if(k=='$di'){
+						apply.push(o);
+					}
+					else if(typeof(o[k])!='undefined'){
+						apply.push(o[k]);
+					}
+					else{
+						apply.push(params[k]);
+					}
+				}
+			}
+			func.apply(el,apply);
+		});
+	};
 	$js = (function(){
 		
 		//invoker
@@ -647,6 +700,20 @@
 			var args = Array.prototype.slice.call(arguments);
 			var mod = args.shift();
 			return $js.invokeArray(mod,args);
+		};
+		js.paramsReflection = paramsReflection;
+		js.moduleDom = function(prefixPath,attrNs){
+			if(!prefixPath)
+				prefixPath = 'js.module.dom/';
+			if(!attrNs)
+				attrNs = 'js';
+			var all = document.getElementsByTagName('*');
+			for(var i=0;i<all.length;i++){
+				var js = all[i].getAttribute(attrNs);
+				if(js){
+					moduleDomElement(prefixPath+js,all[i],attrNs);
+				}
+			}
 		};
 		return js;
 	})();
