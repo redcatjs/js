@@ -2,17 +2,18 @@
 	$js - asynchronous module definition framework
 			or just simple lightweight javascript dependencies manager
 	
-	@version 2.8
+	@version 2.9
 	@link http://github.com/redcatphp/js/
 	@author Jo Surikat <jo@surikat.pro>
 	@website http://redcatphp.com
 */
 (function(w,d){
-	String.prototype.toCamelCase = function(str){
-		return str
-			.replace(/\s(.)/g, function($1){ return $1.toUpperCase(); })
-			.replace(/\s/g, '')
-			.replace(/^(.)/, function($1){ return $1.toLowerCase(); });
+	String.prototype.toCamelCase = function(){
+		var re = /(?:-|\s)+([^-\s])/g;
+		var str = (' ' + this).replace(re, function(a, b){
+			return b.toUpperCase();
+		});
+		return str.substr(0,1).toLowerCase()+str.substr(1);
 	};
 	if(!Array.prototype.indexOf){
 		Array.prototype.indexOf = function(a,obj, start){
@@ -468,7 +469,6 @@
 	};
 	var apt = function(u,c,m){
 		m = m?0:1;
-		//u = getSrc(u);
 		if(!scripts[m][u])
 			scripts[m][u] = [];
 		if(typeof(c)=='function')
@@ -503,7 +503,7 @@
 			if(attributes.hasOwnProperty(k)){
 				var attribute = attributes[k];
 				if(attribute.name&&attribute.name.substr(0,prefixNsL)==prefixNs){
-					o[attribute.name.substr(prefixNsL)] = attribute.value;
+					o[attribute.name.substr(prefixNsL).toCamelCase()] = attribute.value;
 				}
 			}
 		}
