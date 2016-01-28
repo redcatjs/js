@@ -2,21 +2,27 @@
 	$js - asynchronous module definition framework
 			or just simple lightweight javascript dependencies manager
 	
-	@version 2.7
+	@version 2.8
 	@link http://github.com/redcatphp/js/
 	@author Jo Surikat <jo@surikat.pro>
 	@website http://redcatphp.com
 */
 (function(w,d){
-	var indexOf = Array.prototype.indexOf?function(a,obj,start){
-		return a.indexOf(obj,start);
-	}:function(a,obj, start){
-		var j = a.length;
-		for (var i = (start?start:0), j; i < j; i++)
-			if(a[i]===obj)
-				return i;
-		return -1;
+	String.prototype.toCamelCase = function(str){
+		return str
+			.replace(/\s(.)/g, function($1){ return $1.toUpperCase(); })
+			.replace(/\s/g, '')
+			.replace(/^(.)/, function($1){ return $1.toLowerCase(); });
 	};
+	if(!Array.prototype.indexOf){
+		Array.prototype.indexOf = function(a,obj, start){
+			var j = a.length;
+			for (var i = (start?start:0), j; i < j; i++)
+				if(a[i]===obj)
+					return i;
+			return -1;
+		};
+	}
 	var isEmptyObject = function(obj){
 		var name;
 		for(name in obj){
@@ -49,7 +55,7 @@
 	var intercepting;
 	
 	var wait = function(u){
-		if(indexOf(handled,u)>-1)
+		if(handled.indexOf(u)>-1)
 			handle(u);
 		else
 			setTimeout(function(){
@@ -107,9 +113,9 @@
 		}
 		if(typeof(c)=='function')
 			requiring[u].push(c);
-		if(indexOf(handled,u)>-1)
+		if(handled.indexOf(u)>-1)
 			handle(u);
-		else if(indexOf(required,u)>-1)
+		else if(required.indexOf(u)>-1)
 			wait(u);
 	};
 	var resolveAsyncArr = function(u){
@@ -133,7 +139,7 @@
 			if(typeof(u[k])=='object'){
 				for(var ks in u[k]){
 					if(!u[k].hasOwnProperty(ks)) continue;
-					if(typeof(u[k][ks])=='string'&&indexOf(arr,u[k][ks])===-1){
+					if(typeof(u[k][ks])=='string'&&arr.indexOf(u[k][ks])===-1){
 						arr.push(u[k][ks]);
 					}
 				}
@@ -154,10 +160,10 @@
 				}
 				for(var ks in $js.dependenciesMap[key]){
 					if(!$js.dependenciesMap[key].hasOwnProperty(ks)) continue;
-					if(indexOf(deps[key],$js.dependenciesMap[key][ks])===-1){
+					if(deps[key].indexOf($js.dependenciesMap[key][ks])===-1){
 						deps[key].push($js.dependenciesMap[key][ks]);
 					}
-					if(typeof(arr)!='undefined'&&indexOf(arr,$js.dependenciesMap[key][ks])===-1){
+					if(typeof(arr)!='undefined'&&arr.indexOf($js.dependenciesMap[key][ks])===-1){
 						arr.push($js.dependenciesMap[key][ks]);
 					}
 				}
@@ -172,10 +178,10 @@
 				for(var ks in u[k]){
 					if(!u[k].hasOwnProperty(ks)) continue;
 					if(typeof(u[k][ks])=='string'){
-						if(indexOf(deps[key],u[k][ks])===-1){
+						if(deps[key].indexOf(u[k][ks])===-1){
 							deps[key].push(u[k][ks]);
 						}
-						if(indexOf($js.dependenciesMap[key],u[k][ks])===-1){
+						if($js.dependenciesMap[key].indexOf(u[k][ks])===-1){
 							$js.dependenciesMap[key].push(u[k][ks]);
 						}
 					}
@@ -207,7 +213,7 @@
 			for(var k in deps[lib]){
 				if(!deps[lib].hasOwnProperty(k)) continue;
 				depsLibPush(deps,deps[lib][k],container);
-				if(indexOf(container,deps[lib][k])===-1)
+				if(container.indexOf(deps[lib][k])===-1)
 					container.push(deps[lib][k]);
 			}
 		}
@@ -244,9 +250,9 @@
 		while(!isEmptyObject(deps)){
 			var top = [];
 			for(var i = 0; i < splices.length; i++){
-				deps[splices[i][0]].splice(indexOf(deps[splices[i][0]],splices[i][1]),1);
+				deps[splices[i][0]].splice(deps[splices[i][0]].indexOf(splices[i][1]),1);
 				if(deps[splices[i][0]].length===0){
-					if(indexOf(topAll,splices[i][0])===-1){
+					if(topAll.indexOf(splices[i][0])===-1){
 						top.push(splices[i][0]);
 						topAll.push(splices[i][0]);
 					}
@@ -260,7 +266,7 @@
 					if(!deps[k].hasOwnProperty(ks)) continue;
 					var dep = deps[k][ks];
 					if(typeof(deps[dep])=='undefined'){
-						if(indexOf(topAll,dep)===-1){
+						if(topAll.indexOf(dep)===-1){
 							top.push(dep);
 							topAll.push(dep);
 						}
@@ -275,7 +281,7 @@
 	var r = function(g,depTree,depMap,rio,arrSrc,c){ //recLoad
 		var src = getSrc(g);
 		if(typeof(arrSrc)!='undefined'){
-			if(indexOf(requiredGroups[rio],src)===-1)
+			if(requiredGroups[rio].indexOf(src)===-1)
 				requiredGroups[rio].push(src);
 			if(requiredGroups[rio].sort().toString()==arrSrc){
 				c();
@@ -288,7 +294,7 @@
 				var ok = true;
 				for(var z2 in depMap[dp]){
 					if(!depMap[dp].hasOwnProperty(z2)) continue;
-					if(indexOf(required,getSrc(depMap[dp][z2]))===-1){
+					if(required.indexOf(getSrc(depMap[dp][z2]))===-1){
 						ok = false;
 						break;
 					}
@@ -327,19 +333,19 @@
 									var aliasii = ii;
 								}
 								aliasii = resolveAlias(aliasii);
-								if(indexOf(un,aliasii)===-1)
+								if(un.indexOf(aliasii)===-1)
 									un.push(aliasii);
 							}
 						}
 						else{
 							alias = resolveAlias(alias);
-							if(indexOf(un,alias)===-1)
+							if(un.indexOf(alias)===-1)
 								un.push(alias);
 						}
 					}
 					else{
 						u[i] = resolveAlias(u[i]);
-						if(indexOf(un,u[i])===-1)
+						if(un.indexOf(u[i])===-1)
 							un.push(u[i]);
 					}
 				}
@@ -399,7 +405,7 @@
 		var depTreeKeys = [];
 		for(var k in t){
 			if(!t.hasOwnProperty(k)) continue;
-			if(indexOf(depTreeKeys,k)===-1)
+			if(depTreeKeys.indexOf(k)===-1)
 				depTreeKeys.push(k);
 		}
 		var b = function(){
@@ -437,7 +443,7 @@
 					p = u[k];
 				else
 					p = k;
-				if(indexOf(tops[0],p)===-1)
+				if(tops[0].indexOf(p)===-1)
 					tops[0].push(p);
 			}
 		}
@@ -763,7 +769,7 @@
 		var css = function(fileName, media){
 			var test = fileName;
 			fileName = getHref(fileName);
-			if(indexOf(loadedCSS,fileName)<0){
+			if(loadedCSS.indexOf(fileName)<0){
 				loadedCSS.push(fileName);
 				var links = d.getElementsByTagName('link'), i = links.length, style;
 				var exist = false;
