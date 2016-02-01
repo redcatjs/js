@@ -2,7 +2,7 @@
 	$js - asynchronous module definition framework
 			or just simple lightweight javascript dependencies manager
 	
-	@version 3.4
+	@version 3.5
 	@link http://github.com/redcatphp/js/
 	@author Jo Surikat <jo@surikat.pro>
 	@website http://redcatphp.com
@@ -325,7 +325,7 @@
 			}
 		}
 		return r;
-	}
+	};
 	var resolveAlias = function(u){
 		if(typeof(u)=='string'){
 			if(typeof($js.aliasMap[u])!='undefined'){
