@@ -2,7 +2,7 @@
 	$js - asynchronous module definition framework
 			or just simple lightweight javascript dependencies manager
 	
-	@version 3.9
+	@version 4.0
 	@link http://github.com/redcatphp/js/
 	@author Jo Surikat <jo@surikat.pro>
 	@website http://redcatphp.com
@@ -493,7 +493,8 @@
 			scripts[m][u].push(c);
 	};
 	
-	var onExists = function(s,y,n,sync){
+	var existsRegistry = {};
+	var onExists = function(s,y,n,sync,force){
 		sync = sync?true:false;
 		if(s instanceof Array){
 			s.reverse();
@@ -502,6 +503,13 @@
 				ev = '$js.onExists("'+s[i]+'",function(){'+ev+'},n);';
 			}
 			eval(ev);
+			return;
+		}
+		if(!force&&typeof(existsRegistry[s])!='undefined'){
+			if(existsRegistry[s])
+				y();
+			else
+				n();
 			return;
 		}
 		var url = getSrc(s);
@@ -521,9 +529,11 @@
 		httpRequest.onreadystatechange = function(){
 			if(httpRequest.readyState==4){
 				if(httpRequest.status!=404){
+					existsRegistry[s] = true;
 					$js(s,sync,y);
 				}
 				else{
+					existsRegistry[s] = false;
 					n();
 				}
 			}
