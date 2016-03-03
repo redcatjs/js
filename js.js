@@ -2,7 +2,7 @@
 	$js - asynchronous module definition framework
 			or just simple lightweight javascript dependencies manager
 	
-	@version 4.1
+	@version 4.2
 	@link http://github.com/redcatphp/js/
 	@author Jo Surikat <jo@surikat.pro>
 	@website http://redcatphp.com
@@ -566,6 +566,8 @@
 			if(typeof(sync)=='undefined')
 				sync = !$js.async;
 				
+			if(!windowLoaded&&typeof(u)=='string'&&!deps)
+				u = [u];
 			
 			//alias
 			u = resolveAlias(u);
@@ -765,30 +767,6 @@
 		return js;
 	})();
 	var y = {};
-	var loader = function(m,k){
-		var s = scripts[m][k];
-		if(!m){
-			if(k){
-				x(k,function(){
-					for(var i = 0; i < s.length; i++){
-						if(s[i])
-							s[i]();
-					}
-				});
-			}
-			else{
-				for(var i = 0; i < s.length; i++){
-					if(s[i])
-						s[i]();
-				}
-			}
-		}
-		else{
-			if(!y[k])
-				y[k] = [];
-			y[k] = s;
-		}
-	};
 	var keysOf = function(o){
 		var a = [];
 		for(var k in o){
@@ -847,15 +825,27 @@
 		}
 	}
 	
-	var load = function(){			
+	var windowLoaded = false;
+	var loadAsync = function(k,s){
+		x(k,function(){
+			for(var i = 0; i < s.length; i++){
+				if(s[i])
+					s[i]();
+			}
+		});
+	};
+	var y = {};
+	var load = function(){	
+		windowLoaded = true;
 		apt = x;
 		for(var k in scripts[0]){
 			if(!scripts[0].hasOwnProperty(k)) continue;
-			loader(0,k);
+			loadAsync(k,scripts[0][k]);
 		}
 		for(var k in scripts[1]){
-			if(!scripts[0].hasOwnProperty(k)) continue;
-			loader(1,k);
+			if(!scripts[1].hasOwnProperty(k)) continue;
+			if(!y[k]) y[k] = [];
+			y[k].push(scripts[1][k]);
 		}
 		
 		var ev = '';
