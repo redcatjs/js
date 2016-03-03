@@ -2,7 +2,7 @@
 	$js - asynchronous module definition framework
 			or just simple lightweight javascript dependencies manager
 	
-	@version 4.3
+	@version 4.4
 	@link http://github.com/redcatphp/js/
 	@author Jo Surikat <jo@surikat.pro>
 	@website http://redcatphp.com
@@ -17,8 +17,8 @@
 	};
 	if(!Array.prototype.indexOf){
 		Array.prototype.indexOf = function(a,obj, start){
-			var j = a.length;
-			for (var i = (start?start:0), j; i < j; i++)
+			var ai = a.length;
+			for (var i = (start?start:0), ai; i < ai; i++)
 				if(a[i]===obj)
 					return i;
 			return -1;
@@ -302,7 +302,7 @@
 					}
 				}
 				if(ok){
-					js(dp,(function(){
+					$js.exec(dp,(function(){
 						var dpz = dp.toString();
 						return function(){
 							r(dpz,depTree,depMap,rio,arrSrc,c);
@@ -387,7 +387,7 @@
 			u.push(getSrc(uo[k]));
 		}
 		u = u.sort().toString();
-		js(s,function(){
+		$js.exec(s,function(){
 			requiredGroups[i].push(getSrc(s));
 			if(requiredGroups[i].sort().toString()==u){
 				if(typeof(c)=='function')
@@ -446,7 +446,7 @@
 			}
 			if(typeof(u[g])=='function')
 				ev = 'u["'+g+'"]();'+ev;
-			ev = 'js("'+g+'",function(){r("'+g+'",t,o,'+rio+',h,b);'+ev+'},false);';
+			ev = '$js.exec("'+g+'",function(){r("'+g+'",t,o,'+rio+',h,b);'+ev+'},false);';
 		}
 		if(ev) eval(ev);
 	};
@@ -481,7 +481,7 @@
 				}
 				if(typeof(u[d])=='function')
 					ev = 'u["'+d+'"]();'+ev;
-				ev = 'js("'+d+'",function(){'+ev+'});';
+				ev = '$js.exec("'+d+'",function(){'+ev+'});';
 			}
 		}
 		eval(ev);
@@ -499,7 +499,7 @@
 		sync = sync?true:false;
 		if(s instanceof Array){
 			s.reverse();
-			var ev = 'js(s'+(sync?',true':'')+',y);';
+			var ev = '$js(s'+(sync?',true':'')+',y);';
 			for(var i = 0; i < s.length; i++){
 				ev = '$js.onExists("'+s[i]+'",function(){'+ev+'},n);';
 			}
@@ -531,7 +531,7 @@
 			if(httpRequest.readyState==4){
 				if(httpRequest.status!=404){
 					existsRegistry[s] = true;
-					js(s,sync,y);
+					$js(s,sync,y);
 				}
 				else{
 					existsRegistry[s] = false;
@@ -542,7 +542,7 @@
 		httpRequest.send();
 	};
 	
-	var js = function(){
+	var exec = function(){
 		//mixed args
 		var u,c,sync,deps = true;
 		for(var i = 0; i < arguments.length; i++){
@@ -593,19 +593,20 @@
 		//chainable
 		return function(){
 			var a = arguments;
-			return js(u,function(){
-				js.apply(null,a);
+			return $js.exec(u,function(){
+				$js.apply(null,a);
 			});
 		};
 	};
-	$js = (function(j){
+	$js = (function(exec){
 		
 		//invoker
 		var js = function(){
 			if(typeof(arguments[0])=='string')
 				arguments[0] = [arguments[0]];
-			j.apply(null,arguments);
+			exec.apply(null,arguments);
 		};
+		js.exec = exec;
 		
 		//vars init
 		js.dependenciesMap = {};
@@ -642,7 +643,7 @@
 			}
 			var interceptor = {};
 			intercepting = interceptor;
-			js(obj,sync,function(){
+			$js(obj,sync,function(){
 				if(!interceptor.callback){
 					intercepting = false;
 				}
@@ -685,7 +686,7 @@
 				if(obj){
 					var interceptor = {};
 					intercepting = interceptor;
-					var when = js(obj,sync,function(){
+					var when = $js(obj,sync,function(){
 						if(id){
 							js.modules[getSrc(id)] = mod;
 							delete(waitingModule[id]);
@@ -738,7 +739,7 @@
 			}
 		};
 		js.invokeArray = function(mod,args){
-			return js(mod,function(){
+			return $js(mod,function(){
 				$js.module(mod).apply(null,args);
 			});
 		};
@@ -754,7 +755,7 @@
 			if(o.dependencies)
 				$js.dependencies(o.dependencies);
 			if(o.call)
-				js(o.call);
+				$js(o.call);
 		};
 		js.intercept = function(){
 			var interceptor = {};
@@ -769,7 +770,7 @@
 			};
 		};
 		return js;
-	})(js);
+	})(exec);
 	
 	var y = {};
 	var keysOf = function(o){
