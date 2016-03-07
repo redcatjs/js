@@ -542,27 +542,7 @@
 		httpRequest.send();
 	};
 	
-	var exec = function(u,c,sync){
-		//mixed args
-		var u,c,sync;
-		for(var i = 0, l = arguments.length; i < l; i++){
-			switch(typeof(arguments[i])){
-				case 'boolean':
-					if(typeof(sync)=='undefined')
-						sync = arguments[i];
-				break;
-				case 'function':
-					c = arguments[i];
-				break;
-				case 'string':
-				case 'object':
-					u = arguments[i];
-				break;
-			}
-		}
-		if(typeof(sync)=='undefined')
-			sync = !$js.async;
-		
+	var exec = function(u,c,sync){		
 		//alias
 		u = resolveAlias(u);
 		
@@ -587,22 +567,42 @@
 				apt(u,c,!sync);
 			}
 		}
-		
-		//chainable
-		return function(){
-			var a = arguments;
-			return $js.exec(u,function(){
-				$js.apply(null,a);
-			});
-		};
+		return u;
 	};
 	$js = (function(){
 		
 		//invoker
 		var js = function(){
-			if(typeof(arguments[0])=='string')
-				arguments[0] = [arguments[0]];
-			exec.apply(null,arguments);
+			
+			//mixed args
+			var u,c,sync = !$js.async;
+			for(var i = 0, l = arguments.length; i < l; i++){
+				switch(typeof(arguments[i])){
+					case 'boolean':
+						if(typeof(sync)=='undefined')
+							sync = arguments[i];
+					break;
+					case 'function':
+						c = arguments[i];
+					break;
+					case 'string':
+						u = [arguments[i]];
+					break;
+					case 'object':
+						u = arguments[i];
+					break;
+				}
+			}
+			
+			u = exec.apply(null,arguments);
+			
+			//chainable
+			return function(){
+				var a = arguments;
+				return $js.exec(u,function(){
+					$js.apply(null,a);
+				});
+			};
 		};
 		js.exec = exec;
 		
