@@ -307,7 +307,7 @@
 						return function(){
 							r(dpz,depTree,depMap,rio,arrSrc,c);
 						}
-					})(),false);
+					})());
 				}
 			}
 		}
@@ -380,7 +380,7 @@
 		return u;
 	};
 	var requiredGroups = [];
-	var asyncArrayCall = function(uo,s,c,i,deps){
+	var asyncArrayCall = function(uo,s,c,i){
 		var u = [];
 		for(var k in uo){
 			if(!uo.hasOwnProperty(k)) continue;
@@ -393,7 +393,7 @@
 				if(typeof(c)=='function')
 					c();
 			}
-		},false,deps);
+		});
 	};
 	var asyncJsObject = function(u,c){
 		
@@ -446,7 +446,7 @@
 			}
 			if(typeof(u[g])=='function')
 				ev = 'u["'+g+'"]();'+ev;
-			ev = '$js.exec("'+g+'",function(){r("'+g+'",t,o,'+rio+',h,b);'+ev+'},false);';
+			ev = '$js.exec("'+g+'",function(){r("'+g+'",t,o,'+rio+',h,b);'+ev+'});';
 		}
 		if(ev) eval(ev);
 	};
@@ -499,7 +499,7 @@
 		sync = sync?true:false;
 		if(s instanceof Array){
 			s.reverse();
-			var ev = '$js(s'+(sync?',true':'')+',y);';
+			var ev = '$js(s,y'+(sync?',true':'')+');';
 			for(var i = 0, l = s.length; i < l; i++){
 				ev = '$js.onExists("'+s[i]+'",function(){'+ev+'},n);';
 			}
@@ -531,7 +531,7 @@
 			if(httpRequest.readyState==4){
 				if(httpRequest.status!=404){
 					existsRegistry[s] = true;
-					$js(s,sync,y);
+					$js(s,y,sync);
 				}
 				else{
 					existsRegistry[s] = false;
@@ -542,16 +542,14 @@
 		httpRequest.send();
 	};
 	
-	var exec = function(){
+	var exec = function(u,c,sync){
 		//mixed args
-		var u,c,sync,deps = true;
+		var u,c,sync;
 		for(var i = 0, l = arguments.length; i < l; i++){
 			switch(typeof(arguments[i])){
 				case 'boolean':
 					if(typeof(sync)=='undefined')
 						sync = arguments[i];
-					else
-						deps = arguments[i];
 				break;
 				case 'function':
 					c = arguments[i];
@@ -580,7 +578,7 @@
 				c = u;
 				u = 0;
 			}
-			if(deps&&typeof($js.dependenciesMap[u])!='undefined'){
+			if(typeof($js.dependenciesMap[u])!='undefined'){
 				asyncJsObject($js.dependenciesMap[u],function(){
 					apt(u,c,!sync);
 				});
@@ -598,7 +596,7 @@
 			});
 		};
 	};
-	$js = (function(exec){
+	$js = (function(){
 		
 		//invoker
 		var js = function(){
@@ -643,14 +641,14 @@
 			}
 			var interceptor = {};
 			intercepting = interceptor;
-			$js(obj,sync,function(){
+			$js(obj,function(){
 				if(!interceptor.callback){
 					intercepting = false;
 				}
 				else{
 					interceptor.callback();
 				}
-			});
+			},sync);
 		};
 		js.waitingModule = waitingModule;
 		js.module = function(){
@@ -686,7 +684,7 @@
 				if(obj){
 					var interceptor = {};
 					intercepting = interceptor;
-					var when = $js(obj,sync,function(){
+					var when = $js(obj,function(){
 						if(id){
 							js.modules[getSrc(id)] = mod;
 							delete(waitingModule[id]);
@@ -700,7 +698,7 @@
 						else{
 							interceptor.callback();
 						}
-					});
+					},sync);
 					if(id){
 						waitingModule[id] = when;
 					}
@@ -770,7 +768,7 @@
 			};
 		};
 		return js;
-	})(exec);
+	})();
 	
 	var y = {};
 	var keysOf = function(o){
