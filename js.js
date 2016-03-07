@@ -542,29 +542,34 @@
 		httpRequest.send();
 	};
 	
-	var exec = function(u,c,sync){		
-		//alias
-		u = resolveAlias(u);
-		
-		//handle
-		if(typeof(u)=='object'){
-			if(sync)
-				syncJsObject(u,c);
-			else
-				asyncJsObject(u,c);
+	var exec = function(u,c,sync){
+		if(u instanceof Array&&u.length===0){
+			c();
 		}
 		else{
-			if(typeof(u)=='function'){
-				c = u;
-				u = 0;
-			}
-			if(typeof($js.dependenciesMap[u])!='undefined'){
-				asyncJsObject($js.dependenciesMap[u],function(){
-					apt(u,c,!sync);
-				});
+			//alias
+			u = resolveAlias(u);
+			
+			//handle
+			if(typeof(u)=='object'){
+				if(sync)
+					syncJsObject(u,c);
+				else
+					asyncJsObject(u,c);
 			}
 			else{
-				apt(u,c,!sync);
+				if(typeof(u)=='function'){
+					c = u;
+					u = 0;
+				}
+				if(typeof($js.dependenciesMap[u])!='undefined'){
+					asyncJsObject($js.dependenciesMap[u],function(){
+						apt(u,c,!sync);
+					});
+				}
+				else{
+					apt(u,c,!sync);
+				}
 			}
 		}
 		return u;
