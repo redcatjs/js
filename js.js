@@ -18,7 +18,7 @@
 	if(!Array.prototype.indexOf){
 		Array.prototype.indexOf = function(a,obj, start){
 			var ai = a.length;
-			for (var i = (start?start:0), ai; i < ai; i++)
+			for(var i = (start?start:0), ai; i < ai; i++)
 				if(a[i]===obj)
 					return i;
 			return -1;
@@ -251,7 +251,7 @@
 		var splices = [];
 		while(!isEmptyObject(deps)){
 			var top = [];
-			for(var i = 0; i < splices.length; i++){
+			for(var i = 0, l = splices.length; i < l; i++){
 				deps[splices[i][0]].splice(deps[splices[i][0]].indexOf(splices[i][1]),1);
 				if(deps[splices[i][0]].length===0){
 					if(topAll.indexOf(splices[i][0])===-1){
@@ -316,7 +316,7 @@
 		if(!r){
 			r = [];
 		}
-		for(var i=0; i<a.length; i++){
+		for(var i=0, l=a.length; i<l; i++){
 			if(a[i].constructor == Array){
 				flattenArrayOfArrays(a[i], r);
 			}
@@ -336,7 +336,7 @@
 		else if(typeof(u)=='object'){
 			if(u instanceof Array){
 				var un = [];
-				for(var i = 0; i < u.length; i++){
+				for(var i = 0, l = u.length; i < l; i++){
 					if(typeof(u[i])=='string'&&typeof($js.aliasMap[u[i]])!='undefined'){
 						var alias = $js.aliasMap[u[i]];
 						if(typeof(alias)=='object'){
@@ -500,7 +500,7 @@
 		if(s instanceof Array){
 			s.reverse();
 			var ev = '$js(s'+(sync?',true':'')+',y);';
-			for(var i = 0; i < s.length; i++){
+			for(var i = 0, l = s.length; i < l; i++){
 				ev = '$js.onExists("'+s[i]+'",function(){'+ev+'},n);';
 			}
 			eval(ev);
@@ -545,7 +545,7 @@
 	var exec = function(){
 		//mixed args
 		var u,c,sync,deps = true;
-		for(var i = 0; i < arguments.length; i++){
+		for(var i = 0, l = arguments.length; i < l; i++){
 			switch(typeof(arguments[i])){
 				case 'boolean':
 					if(typeof(sync)=='undefined')
@@ -656,7 +656,7 @@
 		js.module = function(){
 			//mixed args
 			var id,mod,obj,sync=!$js.async;
-			for(var i = 0; i < arguments.length; i++){
+			for(var i = 0, l = arguments.length; i < l; i++){
 				switch(typeof(arguments[i])){
 					case 'string':
 						id = arguments[i];
@@ -833,7 +833,7 @@
 	
 	var loadAsync = function(k,s){
 		x(k,function(){
-			for(var i = 0; i < s.length; i++){
+			for(var i = 0, l = s.length; i < l; i++){
 				if(s[i])
 					s[i]();
 			}
@@ -854,11 +854,11 @@
 		
 		var ev = '';
 		var keys = keysOf(y).reverse();
-		for(var u=0; u < keys.length; u++){
+		for(var u=0, l = keys.length; u < l; u++){
 			u = keys[u];
 			var keys2 = keysOf(y[u]).reverse();
 			var ev2 = '';
-			for(var i = 0; i < keys2.length; i++){
+			for(var i = 0, l2 = keys2.length; i < l2; i++){
 				if(y[u]&&y[u][i])
 					ev2 += 'y["'+u+'"]["'+i+'"]();';
 			}
