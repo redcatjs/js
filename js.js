@@ -526,7 +526,7 @@
 				httpRequest = new ActiveXObject("Microsoft.XMLHTTP");
 			}
 		}
-		httpRequest.open('HEAD', url, true);
+		httpRequest.open('HEAD', cacheFix(url,$js.dev,$js.min,'js',$js.cdn), true);
 		httpRequest.onreadystatechange = function(){
 			if(httpRequest.readyState==4){
 				if(httpRequest.status!=404){
