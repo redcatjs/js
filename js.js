@@ -2,7 +2,7 @@
 	$js - asynchronous module definition framework
 			or just simple lightweight javascript dependencies manager
 	
-	@version 4.6
+	@version 4.7
 	@link http://github.com/redcatphp/js/
 	@author Jo Surikat <jo@surikat.pro>
 	@website http://redcatphp.com
@@ -75,10 +75,7 @@
 		var relative = u.indexOf('//')<0&&u.substr(0,2)!='./';
 		return ($js.cdn&&relative?$js.cdn:'')+(u.indexOf('/')!==0?($js.path&&relative&&(!$js.pathDetection||u.indexOf($js.path)!=0)?($js.path+u):u)+($js.pathSuffix&&relative&&(!$js.pathDetection||u.substr(u.length-$js.pathSuffix.length)!=$js.pathSuffix)?$js.pathSuffix:''):u);
 	};
-	var createScript = function(u){
-		var s = d.createElement('script');
-		d.type = 'text/javascript';
-		d.body.appendChild(s);
+	var makeSrcCallback = function(u){
 		var realcallback = function(){
 			var shift = $js.modulesStack.shift();
 			if(shift)
@@ -97,11 +94,30 @@
 				realcallback();
 			}
 		};
+		return callback;
+	};
+	var createScript = function(u){
+		var callback = makeSrcCallback(u);
+		var s = d.createElement('script');
+		d.type = 'text/javascript';
+		d.body.appendChild(s);
 		s.onload = callback;
 		s.onreadystatechange = function(){if(callback&&this.readyState==='loaded'){callback();}}; //old browsers
 		s.setAttribute('async','async');
 		s.src = cacheFix(u,$js.dev,$js.min,'js',$js.cdn);
 	};
+	var resolve = function(u, c){
+		if(typeof(c)=='function') c();
+		u = getSrc(u);
+		if(!requiring[u]){
+			requiring[u] = [];
+			makeSrcCallback(u)();
+		}
+		if(handled.indexOf(u)>-1)
+			handle(u);
+		else if(required.indexOf(u)>-1)
+			wait(u);
+	}; 
 	var x = function(u,c){
 		if(!u){
 			if(typeof(c)=='function')
@@ -772,6 +788,7 @@
 				}
 			};
 		};
+		js.resolve = resolve;
 		return js;
 	})();
 	
