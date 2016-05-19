@@ -2,7 +2,7 @@
 	$js - asynchronous module definition framework
 			or just simple lightweight javascript dependencies manager
 	
-	@version 4.7
+	@version 4.8
 	@link http://github.com/redcatphp/js/
 	@author Jo Surikat <jo@surikat.pro>
 	@website http://redcatphp.com
@@ -614,8 +614,7 @@
 					break;
 				}
 			}
-			
-			u = exec.apply(null,arguments);
+			u = exec(u,c,sync);
 			
 			//chainable
 			return function(){
