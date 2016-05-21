@@ -2,7 +2,7 @@
 	$js - asynchronous module definition framework
 			or just simple lightweight javascript dependencies manager
 	
-	@version 4.8
+	@version 5.0
 	@link http://github.com/redcatphp/js/
 	@author Jo Surikat <jo@surikat.pro>
 	@website http://redcatphp.com
@@ -32,19 +32,35 @@
 		return true;
 	};
 	var ts = (new Date().getTime()).toString();
-	var cacheFix = function(fileName,dev,min,ext,cdn){
-		if(dev||min){
-			var relative = fileName.indexOf('//')<0||(cdn&&fileName.indexOf(cdn)===0);
-			if(min){
-				if(relative&&fileName.indexOf('.min.'+ext)<0&&fileName.indexOf('.'+ext)){
-					var p = fileName.lastIndexOf('.'+ext);
-					if(p>-1)
-						fileName = fileName.substr(0,p)+'.min'+fileName.substr(p);
-				}
+	var devOverride = function(u,ext){
+		var ref, dev;
+		if(ext=='js') ref = $js;
+		else ref = $css;
+		dev = ref.dev;
+		if(dev){
+			if(ref.inProdFiles.indexOf(u)!==-1){
+				dev = false;
 			}
-			else{
-				if(relative&&fileName.indexOf('_t=')<0)
-					fileName += (fileName.indexOf('?')<0?'?':'&')+'_t='+ts;
+		}
+		else{
+			if(ref.inDevFiles.indexOf(u)!==-1){
+				dev = true;
+			}
+		}
+		return dev;
+	};
+	var cacheFix = function(fileName,dev,min,ext,cdn){
+		if(!min&&!dev) return fileName;
+		if(!fileName.indexOf('//')<0||(cdn&&fileName.indexOf(cdn)===0)) return; //relative
+		if(dev){
+			if(fileName.indexOf('_t=')<0)
+				fileName += (fileName.indexOf('?')<0?'?':'&')+'_t='+ts;
+		}
+		else if(min){
+			if(fileName.indexOf('.min.'+ext)<0&&fileName.indexOf('.'+ext)){
+				var p = fileName.lastIndexOf('.'+ext);
+				if(p>-1)
+					fileName = fileName.substr(0,p)+'.min'+fileName.substr(p);
 			}
 		}
 		return fileName;
@@ -96,7 +112,7 @@
 		};
 		return callback;
 	};
-	var createScript = function(u){
+	var createScript = function(u,dev){
 		var callback = makeSrcCallback(u);
 		var s = d.createElement('script');
 		d.type = 'text/javascript';
@@ -104,7 +120,7 @@
 		s.onload = callback;
 		s.onreadystatechange = function(){if(callback&&this.readyState==='loaded'){callback();}}; //old browsers
 		s.setAttribute('async','async');
-		s.src = cacheFix(u,$js.dev,$js.min,'js',$js.cdn);
+		s.src = cacheFix(u,dev,$js.min,'js',$js.cdn);
 	};
 	var resolve = function(u, c){
 		if(typeof(c)=='function') c();
@@ -124,10 +140,11 @@
 				c();
 			return;
 		}
+		var dev = devOverride(u,'js');
 		u = getSrc(u);
 		if(!requiring[u]){
 			requiring[u] = [];
-			createScript(u);
+			createScript(u,dev);
 		}
 		if(typeof(c)=='function')
 			requiring[u].push(c);
@@ -542,7 +559,7 @@
 				httpRequest = new ActiveXObject("Microsoft.XMLHTTP");
 			}
 		}
-		httpRequest.open('HEAD', cacheFix(url,$js.dev,$js.min,'js',$js.cdn), true);
+		httpRequest.open('HEAD', cacheFix(url,devOverride(s,'js'),$js.min,'js',$js.cdn), true);
 		httpRequest.onreadystatechange = function(){
 			if(httpRequest.readyState==4){
 				if(httpRequest.status!=404){
@@ -640,6 +657,8 @@
 		js.pathSuffix = '.js';
 		js.min = false;
 		js.cdn = false;
+		js.inProdFiles = [];
+		js.inDevFiles = [];
 		
 		//methods
 		js.alias = function(alias,concrete){
@@ -774,6 +793,10 @@
 				$js.dependencies(o.dependencies);
 			if(o.call)
 				$js(o.call);
+			if(o.inProdFiles)
+				$js.inProdFiles = o.inProdFiles;
+			if(o.inDevFiles)
+				$js.inDevFiles = o.inDevFiles;
 		};
 		js.intercept = function(){
 			var interceptor = {};
@@ -827,7 +850,7 @@
 					style.rel = 'stylesheet';
 					if(media)
 						style.media =	media;
-					style.href = cacheFix(fileName,$css.dev,$css.min,'css',$css.cdn);
+					style.href = cacheFix(fileName,devOverride(s,'css'),$css.min,'css',$css.cdn);
 					d.getElementsByTagName('head')[0].appendChild(style);
 				}
 			}
@@ -838,6 +861,8 @@
 		css.pathSuffix = '.css';
 		css.min = false;
 		css.cdn = false;
+		css.inProdFiles = [];
+		css.inDevFiles = [];
 		return css;
 	})();
 	
