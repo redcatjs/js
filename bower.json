@@ -1,5 +1,5 @@
 {
-  "name": "@redcatphp/js",
+  "name": "js",
   "main": "js.js",
   "homepage": "https://github.com/redcatphp/js",
   "description": "Asynchronous Module Definition framework",
