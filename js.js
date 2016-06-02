@@ -2,7 +2,7 @@
 	$js - asynchronous module definition framework
 			or just simple lightweight javascript dependencies manager
 	
-	@version 5.2
+	@version 5.2.1
 	@link http://github.com/redcatphp/js/
 	@author Jo Surikat <jo@surikat.pro>
 	@website http://redcatphp.com
@@ -577,7 +577,7 @@
 	
 	var exec = function(u,c,sync){
 		if(u instanceof Array&&u.length===0){
-			c();
+			if(c) c();
 		}
 		else{
 			//alias
