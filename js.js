@@ -2,7 +2,7 @@
 	$js - asynchronous module definition framework
 			or just simple lightweight javascript dependencies manager
 	
-	@version 5.2.1
+	@version 5.2.2
 	@link http://github.com/redcatphp/js/
 	@author Jo Surikat <jo@surikat.pro>
 	@website http://redcatphp.com
@@ -617,8 +617,7 @@
 			for(var i = 0, l = arguments.length; i < l; i++){
 				switch(typeof(arguments[i])){
 					case 'boolean':
-						if(typeof(sync)=='undefined')
-							sync = arguments[i];
+						sync = arguments[i];
 					break;
 					case 'function':
 						c = arguments[i];
