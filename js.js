@@ -2,7 +2,7 @@
 	$js - asynchronous module definition framework
 			or just simple lightweight javascript dependencies manager
 	
-	@version 5.2.2
+	@version 5.3
 	@link http://github.com/redcatphp/js/
 	@author Jo Surikat <jo@surikat.pro>
 	@website http://redcatphp.com
@@ -33,17 +33,15 @@
 	};
 	var ts = (new Date().getTime()).toString();
 	var devOverride = function(u,ext){
-		var ref, dev;
-		if(ext=='js') ref = $js;
-		else ref = $css;
-		dev = ref.dev;
+		var dev;
+		dev = $js.dev;
 		if(dev){
-			if(ref.inProdFiles.indexOf(u)!==-1){
+			if($js.inProdFiles.indexOf(u)!==-1){
 				dev = false;
 			}
 		}
 		else{
-			if(ref.inDevFiles.indexOf(u)!==-1){
+			if($js.inDevFiles.indexOf(u)!==-1){
 				dev = true;
 			}
 		}
@@ -822,55 +820,12 @@
 		}
 		return a;
 	};
-
-
-	var getHref = function(u){
-		if(typeof(u)=='undefined'||!u)
-			return;
-		var relative = u.indexOf('//')<0&&u.substr(0,2)!='./';
-		return ($css.cdn&&relative?$css.cdn:'')+($css.path&&relative&&u.indexOf('/')!==0&&(!$css.pathDetection||u.indexOf($css.path)!=0)?($css.path+u):u)+($css.pathSuffix&&relative&&(!$css.pathDetection||u.substr(u.length-$css.pathSuffix.length)!=$css.pathSuffix)?$css.pathSuffix:'');
-	};
-	var loadedCSS = [];
-	$css = (function(){
-		var css = function(fileName, media){
-			var test = fileName;
-			fileName = getHref(fileName);
-			if(loadedCSS.indexOf(fileName)<0){
-				loadedCSS.push(fileName);
-				var links = d.getElementsByTagName('link'), i = links.length, style;
-				var exist = false;
-				while(i--){ // check if not already loaded fixed in head
-					if (links[i].href.indexOf(fileName) > -1)
-						exist = true;
-				}
-				if(!exist){
-					style = d.createElement('link');
-					style.type = 'text/css';
-					style.rel = 'stylesheet';
-					if(media)
-						style.media =	media;
-					style.href = cacheFix(fileName,devOverride(s,'css'),$css.min,'css',$css.cdn);
-					d.getElementsByTagName('head')[0].appendChild(style);
-				}
-			}
-		};
-		css.dev = false;
-		css.path = 'css/';
-		css.pathDetection = true;
-		css.pathSuffix = '.css';
-		css.min = false;
-		css.cdn = false;
-		css.inProdFiles = [];
-		css.inDevFiles = [];
-		return css;
-	})();
 	
 	var base = d.getElementsByTagName('base');
 	if(base.length){
 		var dcdn = base[0].getAttribute('data-cdn');
 		if(typeof(dcdn)!='undefined'){
 			$js.cdn = dcdn;
-			$css.cdn = dcdn;
 		}
 	}
 	
