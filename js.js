@@ -2,7 +2,7 @@
 	$js - asynchronous module definition framework
 			or just simple lightweight javascript dependencies manager
 	
-	@version 5.3
+	@version 5.4
 	@link http://github.com/redcatphp/js/
 	@author Jo Surikat <jo@surikat.pro>
 	@website http://redcatphp.com
@@ -649,7 +649,7 @@
 		//config init
 		js.dev = false;
 		js.async = true;
-		js.path = 'js/';
+		js.path = '';
 		js.pathDetection = true;
 		js.pathSuffix = '.js';
 		js.min = false;
