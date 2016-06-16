@@ -2,7 +2,7 @@
 	$js - asynchronous module definition framework
 			or just simple lightweight javascript dependencies manager
 	
-	@version 5.4
+	@version 5.5
 	@link http://github.com/redcatphp/js/
 	@author Jo Surikat <jo@surikat.pro>
 	@website http://redcatphp.com
@@ -752,22 +752,36 @@
 		js.dependencies = function(deps){
 			for(var k in deps){
 				if(!deps.hasOwnProperty(k)) continue;
+				
+				var v = deps[k];
+				
+				var k = resolveAlias(k);
+				if(typeof(k)=='object'){
+					for(var k2 in k){
+						if(!k.hasOwnProperty(k2)) continue;
+						var dep = {};
+						dep[k2] = val;
+						js.dependencies(dep);
+					}
+					continue;
+				}
+				
 				if(typeof(js.dependenciesMap[k])=='undefined'){
 					js.dependenciesMap[k] = [];
 				}
-				if(typeof(deps[k])=='string'){
-					if(typeof($js.aliasMap[deps[k]])!='undefined'){
-						js.dependenciesMap[k].push($js.aliasMap[deps[k]]);
+				if(typeof(v)=='string'){
+					if(typeof($js.aliasMap[v])!='undefined'){
+						js.dependenciesMap[k].push($js.aliasMap[v]);
 					}
 					else{
-						js.dependenciesMap[k].push(deps[k]);
+						js.dependenciesMap[k].push(v);
 					}
 				}
 				else{
-					deps[k] = resolveAlias(deps[k]);
-					for(var ks in deps[k]){
-						if(!deps[k].hasOwnProperty(ks)) continue;
-						js.dependenciesMap[k].push(deps[k][ks]);
+					v = resolveAlias(v);
+					for(var ks in v){
+						if(!v.hasOwnProperty(ks)) continue;
+						js.dependenciesMap[k].push(v[ks]);
 					}
 				}
 			}
