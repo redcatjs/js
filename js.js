@@ -2,7 +2,7 @@
 	$js - asynchronous module definition framework
 			or just simple lightweight javascript dependencies manager
 	
-	@version 5.6
+	@version 5.7
 	@link http://github.com/redcatphp/js/
 	@author Jo Surikat <jo@surikat.pro>
 	@website http://redcatphp.com
@@ -36,12 +36,12 @@
 		var dev;
 		dev = $js.dev;
 		if(dev){
-			if($js.inProdFiles.indexOf(u)!==-1){
+			if($js.inProdFilesRegistry.indexOf(u)!==-1){
 				dev = false;
 			}
 		}
 		else{
-			if($js.inDevFiles.indexOf(u)!==-1){
+			if($js.inDevFilesRegistry.indexOf(u)!==-1){
 				dev = true;
 			}
 		}
@@ -654,8 +654,8 @@
 		js.pathSuffix = '.js';
 		js.min = false;
 		js.cdn = false;
-		js.inProdFiles = [];
-		js.inDevFiles = [];
+		js.inProdFilesRegistry = [];
+		js.inDevFilesRegistry = [];
 		
 		//methods
 		js.alias = function(alias,concrete){
@@ -806,9 +806,31 @@
 			if(o.call)
 				$js(o.call);
 			if(o.inProdFiles)
-				$js.inProdFiles = o.inProdFiles;
+				$js.inProdFiles(o.inProdFiles);
 			if(o.inDevFiles)
-				$js.inDevFiles = o.inDevFiles;
+				$js.inDevFiles(o.inDevFiles);
+		};
+		js.inProdFiles = function(files){
+			for(var i = 0, l = files.length; i < l; i++){
+				var file = resolveAlias(files[i]);
+				if(typeof(file)=='object'){
+					$js.inProdFiles(file);
+				}
+				else if($js.inProdFilesRegistry.indexOf(file)===-1){
+					$js.inProdFilesRegistry.push(file);
+				}
+			}
+		};
+		js.inDevFiles = function(files){
+			for(var i = 0, l = files.length; i < l; i++){
+				var file = resolveAlias(files[i]);
+				if(typeof(file)=='object'){
+					$js.inDevFiles(file);
+				}
+				else if($js.inDevFilesRegistry.indexOf(file)===-1){
+					$js.inDevFilesRegistry.push(file);
+				}
+			}
 		};
 		js.intercept = function(){
 			var interceptor = {};
