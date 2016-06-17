@@ -566,7 +566,9 @@
 				}
 				else{
 					existsRegistry[s] = false;
-					n();
+					if(typeof(n)=='function'){
+						n();
+					}
 				}
 			}
 		};
