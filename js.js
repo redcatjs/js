@@ -2,7 +2,7 @@
 	$js - asynchronous module definition framework
 			or just simple lightweight javascript dependencies manager
 	
-	@version 5.5
+	@version 5.6
 	@link http://github.com/redcatphp/js/
 	@author Jo Surikat <jo@surikat.pro>
 	@website http://redcatphp.com
@@ -755,15 +755,16 @@
 				
 				var v = deps[k];
 				
-				var k = resolveAlias(k);
-				if(typeof(k)=='object'){
-					for(var k2 in k){
-						if(!k.hasOwnProperty(k2)) continue;
-						var dep = {};
-						dep[k2] = val;
-						js.dependencies(dep);
+				if(typeof($js.aliasMap[k])!='undefined'){
+					var key = k;
+					k = $js.aliasMap[key];
+					if(typeof(k)=='object'){
+						k = k.reverse();
+						for(var i = 0, l = k.length; i < l; i++){
+							$js.aliasMap[key].unshift(k[i]);
+						}
+						continue;
 					}
-					continue;
 				}
 				
 				if(typeof(js.dependenciesMap[k])=='undefined'){
