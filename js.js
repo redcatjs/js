@@ -824,17 +824,16 @@
 			return $js.invokeArray(mod,args);
 		};
 		js.onExists = onExists;
-		js.map = function(o){
-			if(o.alias)
-				$js.alias(o.alias);
-			if(o.dependencies)
-				$js.dependencies(o.dependencies);
-			if(o.call)
-				$js(o.call);
-			if(o.inProdFiles)
-				$js.inProdFiles(o.inProdFiles);
-			if(o.inDevFiles)
-				$js.inDevFiles(o.inDevFiles);
+		js.config = function(o){
+			for(var k in o){
+				if(!o.hasOwnProperty(k)) continue;
+				if(typeof($js[k])=='function'){
+					$js[k](o[k]);
+				}
+				else{
+					$js[k] = o[k];
+				}
+			}
 		};
 		js.inProdFiles = function(files){
 			for(var i = 0, l = files.length; i < l; i++){
