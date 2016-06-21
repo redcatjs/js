@@ -870,6 +870,7 @@
 			};
 		};
 		js.resolve = resolve;
+		js.load = js;
 		return js;
 	})();
 	
