@@ -1,6 +1,6 @@
 {
-  "name": "@redcatphp/js",
-  "version": "5.2.0",
+  "name": "@redcatjs/js",
+  "version": "5.9.1",
   "description": "Asynchronous Module Definition framework",
   "main": "js.js",
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/redcatphp/js"
+    "url": "https://github.com/redcatjs/js"
   },
   "keywords": [
     "dependencies",
@@ -22,6 +22,6 @@
   "author": "Jo Surikat <jo@surikat.pro>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/redcatphp/js/issues"
+    "url": "https://github.com/redcatjs/js/issues"
   }
 }
