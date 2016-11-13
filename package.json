@@ -1,6 +1,6 @@
 {
   "name": "@redcatjs/js",
-  "version": "5.9.1",
+  "version": "5.9.2",
   "description": "Asynchronous Module Definition framework",
   "main": "js.js",
   "scripts": {
