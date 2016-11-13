@@ -145,31 +145,6 @@ whenReady(function(){
 });
 ```
 
-CSS helper
-----------
-
-### Config
-
-Here is the default config. See [config of js](http://redcatphp.com/js-amd#js-config) upper for details.
-
-```javascript
-$css.path = 'css/';
-$css.pathSuffix = '.css';
-$css.pathDetection = true;
-$css.dev = false;
-```
-
-### Simple call
-
-It will check if the link is allready present in the document and if it's the case, it will not load it. You cannot use callback on it because this feature it's not supported by browsers.
-
-```javascript
-$css('css/style.css');
-$css('css/style');
-$css('style.css');
-$css('style');
-```
-
 Asynchronous Module Definition
 ------------------------------
 
