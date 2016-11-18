@@ -24,6 +24,14 @@
 			return -1;
 		};
 	}
+	var indexOfObject = function(obj,val){
+		for(var k in obj){
+			if(obj.hasOwnProperty(k)&&obj[k]===val){
+				return k;
+			}
+		}
+		return false;
+	};
 	var isEmptyObject = function(obj){
 		var name;
 		for(name in obj){
@@ -70,18 +78,26 @@
 	var intercepting;
 	var waitingModule = {};
 	
+	var deferredObjectMap = {};
+	var deferredResult = {};
+	var deferredObjectId = 0;
+	
 	var wait = function(u){
-		if(handled.indexOf(u)>-1)
+		if(handled.indexOf(u)>-1){
 			handle(u);
-		else
+		}
+		else{
 			setTimeout(function(){
 				wait(u);
 			},100);
+		}
 	};
 	var handle = function(u){
-		if(requiring[u])
-			while(requiring[u].length)
+		if(requiring[u]){
+			while(requiring[u].length){
 				(requiring[u].shift())(u);
+			}
+		}
 	};
 	var getSrc = function(u){
 		if(typeof(u)=='undefined'||!u)
@@ -419,10 +435,18 @@
 		}
 		u = u.sort().toString();
 		$js.exec(s,function(){
-			requiredGroups[i].push(getSrc(s));
-			if(requiredGroups[i].sort().toString()==u){
-				if(typeof(c)=='function')
-					c();
+			var rgi = requiredGroups[i];
+			rgi.push(getSrc(s));
+			if(rgi.sort().toString()==u){
+				if(typeof(c)=='function'){
+					var args = [];
+					for(var y = 0, l=rgi.length; y<l; y++){
+						if(deferredResult.hasOwnProperty(rgi[y])){
+							args.push(deferredResult[rgi[y]]);
+						}
+					}
+					c.apply(null,args);
+				}
 			}
 		});
 	};
@@ -598,6 +622,14 @@
 		};
 		httpRequest.send();
 	};
+	var attachToDeferred = function(df,k){
+		df.then(function(){
+			deferredResult[k] = arguments;
+			required.push(k);
+			handle(k);
+			handled.push(k);
+		});
+	};
 	
 	var exec = function(u,c,sync){
 		if(u instanceof Array&&u.length===0){
@@ -654,7 +686,30 @@
 					break;
 				}
 			}
+			
+			var dfs = {};
+			if(u instanceof Array){
+				for(var i = 0, l = u.length; i < l; i++){
+					var df = u[i];
+					if(typeof(df)=='object'&&typeof(df.then)=='function'){
+						var dfk = indexOfObject(deferredObjectMap,df);
+						if(!dfk){
+							dfk = '////'+(++deferredObjectId);
+							deferredObjectMap[dfk] = df;
+							dfs[dfk] = df;
+						}
+						u.splice(i,1,dfk);
+					}
+				}
+			}
+			
 			u = exec(u,c,sync);
+			
+			for(var k in dfs){
+				if(dfs.hasOwnProperty(k)){
+					attachToDeferred(dfs[k],k);
+				}
+			}
 			
 			//chainable
 			return function(){
@@ -868,6 +923,10 @@
 					interceptor.callback();
 				}
 			};
+		};
+		js.deferredResult = function(df){
+			var dfk = indexOfObject(deferredObjectMap,df);
+			return deferredResult[dfk];
 		};
 		js.resolve = resolve;
 		js.load = js;
