@@ -1,8 +1,7 @@
 /*
-	$js - asynchronous module definition framework
-			or just simple lightweight javascript dependencies manager
+	$js - javascript dependencies manager
 	
-	@version 6.0.0
+	@version 6.0.1
 	@link http://github.com/redcatphp/js/
 	@author Jo Surikat <jo@surikat.pro>
 	@website http://redcatphp.com

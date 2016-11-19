@@ -1,4 +1,4 @@
-# $js - Asynchronous Module Definition framework
+# $js - Dependencies manager
 
  From lightweight javascript dependencies manager to asynchronous module definition framework.  
  $js is greatly lighter than the famous AMD framework [requirejs](http://requirejs.org) or, of course, the wonderful [jQuery](http://jquery.com) framework. By using it as the only script required by your page to load you can improve significantly the performance of your page loading and make your javascript realy non obstrusive.
