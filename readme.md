@@ -1,3 +1,5 @@
+**No longer actively maintained. I recommand you to take a look on [Webpack](https://webpack.js.org/) and [Babel](https://babeljs.io/)**
+
 # $js - Dependencies manager
 
  From lightweight javascript dependencies manager to asynchronous module definition framework.  
